@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+@import './layout.css';
+@import './components.css';
+
+:root {
+  --ink: #23372f;
+  --muted: #6f7c75;
+  --line: #e5e6dd;
+  --paper: #f7f4eb;
+  --card: #fffdf8;
+  --moss: #657b62;
+  --moss-dark: #425d4d;
+  --sage: #dfe7d8;
+  --shadow: 0 18px 45px rgba(48, 62, 52, 0.08);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, sans-serif; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid rgba(89, 121, 101, 0.35); outline-offset: 3px; }
+a { color: inherit; text-decoration: none; }
+.loading-shell { min-height: 100vh; display: grid; place-items: center; color: var(--muted); }
