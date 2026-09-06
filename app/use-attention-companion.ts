@@ -160,3 +160,5 @@ export function useAttentionCompanion() {
     requestNotifications,
   };
 }
+
+export type AttentionCompanion = ReturnType<typeof useAttentionCompanion>;

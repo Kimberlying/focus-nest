@@ -17,6 +17,7 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, sans-serif; }
+body.menu-open { overflow: hidden; }
 button, input { font: inherit; }
 button { cursor: pointer; }
 button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid rgba(89, 121, 101, 0.35); outline-offset: 3px; }
