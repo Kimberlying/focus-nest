@@ -1,18 +1,18 @@
 .care-rail { display: flex; gap: 10px; width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 18px 16px; overflow-x: auto; scrollbar-width: none; }
 .care-rail::-webkit-scrollbar { display: none; }
-.care-chip { display: grid; grid-template-columns: 38px minmax(132px,1fr) auto; align-items: center; gap: 10px; min-width: 260px; padding: 10px 11px; border: 1px solid rgba(0,0,0,.07); border-radius: 15px; background: rgba(252,252,248,.78); box-shadow: 0 12px 32px -23px rgba(0,0,0,.28); backdrop-filter: blur(16px); }
-.chip-icon, .action-icon { display: grid; width: 38px; height: 38px; place-items: center; border-radius: 12px; font-size: 11px; font-weight: 800; }
+.care-chip { display: grid; grid-template-columns: 44px minmax(142px,1fr) auto; align-items: center; gap: 11px; min-width: 292px; padding: 13px 14px; border: 1px solid rgba(0,0,0,.07); border-radius: 15px; background: rgba(252,252,248,.78); box-shadow: 0 12px 32px -23px rgba(0,0,0,.28); backdrop-filter: blur(16px); }
+.chip-icon, .action-icon { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 12px; font-size: 13px; font-weight: 800; }
 .blue .chip-icon, .action-icon.blue { background: #e0ebef; color: #52758a; }
 .green .chip-icon, .action-icon.green { background: #dfe9dc; color: #52705a; }
 .amber .chip-icon, .action-icon.amber { background: #f1e5cf; color: #8b6637; }
 .rose .chip-icon, .action-icon.rose { background: #eee0dc; color: #8a6058; }
 .violet .chip-icon, .action-icon.violet { background: #e8e2ef; color: #6f5d81; }
 .cat-chip { overflow: hidden; background: #f3e8dd; }
-.cat-chip img { width: 42px; height: 42px; object-fit: contain; }
+.cat-chip img { width: 48px; height: 48px; object-fit: contain; }
 .care-chip > span:nth-child(2) { display: grid; min-width: 0; }
-.care-chip b { overflow: hidden; color: #202520; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
-.care-chip small { color: #687068; font-size: 10px; }
-.care-chip button { padding: 7px 8px; border: 0; border-radius: 8px; background: rgba(255,255,255,.78); color: #293229; font-size: 10px; font-weight: 700; }
+.care-chip b { overflow: hidden; color: #202520; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+.care-chip small { color: #687068; font-size: 12px; line-height: 1.4; }
+.care-chip button { padding: 9px 10px; border: 0; border-radius: 8px; background: rgba(255,255,255,.78); color: #293229; font-size: 12px; font-weight: 700; white-space: nowrap; }
 .care-chip button:disabled { opacity: .5; cursor: default; }
 .panel-backdrop { position: fixed; z-index: 100; inset: 0; display: flex; justify-content: flex-end; padding: 10px; background: rgba(14,22,16,.22); backdrop-filter: blur(6px); animation: panel-fade .3s ease both; }
 .side-panel { width: min(440px,100%); height: 100%; overflow-y: auto; border: 1px solid rgba(0,0,0,.08); border-radius: 22px; background: #f9faf6; box-shadow: -20px 0 70px rgba(20,32,23,.16); animation: panel-in .55s var(--ease) both; }
@@ -63,8 +63,11 @@
 }
 
 @media (min-width: 56.25rem) {
-  .care-rail { display: grid; grid-template-columns: repeat(auto-fit,minmax(205px,1fr)); gap: 10px; padding: 0 24px 24px; overflow: visible; }
-  .care-chip { min-width: 0; }
+  .care-rail { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 10px; padding: 0 24px 24px; overflow: visible; }
+  .care-chip { grid-template-columns: 42px minmax(0,1fr) auto; gap: 8px; min-width: 0; padding: 12px; }
+  .care-chip b { font-size: 13.5px; }
+  .care-chip small { font-size: 11.5px; }
+  .care-chip button { padding: 8px 7px; font-size: 11px; }
 }
 
 @keyframes panel-in { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
