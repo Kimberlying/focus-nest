@@ -10,9 +10,9 @@
 .cat-chip { overflow: hidden; background: #f3e8dd; }
 .cat-chip img { width: 48px; height: 48px; object-fit: contain; }
 .care-chip > span:nth-child(2) { display: grid; min-width: 0; }
-.care-chip b { overflow: hidden; color: #202520; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
-.care-chip small { color: #687068; font-size: 12px; line-height: 1.4; }
-.care-chip button { padding: 9px 10px; border: 0; border-radius: 8px; background: rgba(255,255,255,.78); color: #293229; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.care-chip b { overflow: hidden; color: #202520; font-size: 16px; text-overflow: ellipsis; white-space: nowrap; }
+.care-chip small { color: #687068; font-size: 14px; line-height: 1.4; }
+.care-chip button { padding: 10px 11px; border: 0; border-radius: 8px; background: rgba(255,255,255,.78); color: #293229; font-size: 13px; font-weight: 700; white-space: nowrap; }
 .care-chip button:disabled { opacity: .5; cursor: default; }
 .panel-backdrop { position: fixed; z-index: 100; inset: 0; display: flex; justify-content: flex-end; padding: 10px; background: rgba(14,22,16,.22); backdrop-filter: blur(6px); animation: panel-fade .3s ease both; }
 .side-panel { width: min(440px,100%); height: 100%; overflow-y: auto; border: 1px solid rgba(0,0,0,.08); border-radius: 22px; background: #f9faf6; box-shadow: -20px 0 70px rgba(20,32,23,.16); animation: panel-in .55s var(--ease) both; }
@@ -65,9 +65,9 @@
 @media (min-width: 56.25rem) {
   .care-rail { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 10px; padding: 0 24px 24px; overflow: visible; }
   .care-chip { grid-template-columns: 42px minmax(0,1fr) auto; gap: 8px; min-width: 0; padding: 12px; }
-  .care-chip b { font-size: 13.5px; }
-  .care-chip small { font-size: 11.5px; }
-  .care-chip button { padding: 8px 7px; font-size: 11px; }
+  .care-chip b { font-size: 15.5px; line-height: 1.2; text-overflow: clip; white-space: normal; }
+  .care-chip small { font-size: 13px; }
+  .care-chip button { padding: 9px 7px; font-size: 12px; }
 }
 
 @keyframes panel-in { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
