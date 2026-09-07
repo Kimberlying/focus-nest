@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 type SupplementPeriod = 'morning' | 'evening';
 type MassagePeriod = 'morning' | 'bedtime';
 type ReminderKind = 'water' | 'eye';
+type SyncStatus = 'loading' | 'synced' | 'local';
 type CompanionState = {
   dateKey: string; task: string; waterCount: number; waterGoal: number; eyeCount: number;
   focusSecondsToday: number; catXp: number; waterInterval: number; eyeInterval: number;
@@ -37,6 +38,29 @@ function freshState(): CompanionState {
   };
 }
 
+function normalizeState(value: unknown): CompanionState {
+  const base = freshState();
+  const saved = value && typeof value === 'object' && !Array.isArray(value)
+    ? value as Partial<CompanionState>
+    : {};
+  const parsed: CompanionState = {
+    ...base,
+    ...saved,
+    supplements: { ...base.supplements, ...saved.supplements },
+    eyeMassages: { ...base.eyeMassages, ...saved.eyeMassages },
+  };
+  const dailyState = parsed.dateKey === todayKey() ? parsed : {
+    ...parsed, dateKey: todayKey(), waterCount: 0, eyeCount: 0, focusSecondsToday: 0,
+    supplements: { morning: false, evening: false },
+    eyeMassages: { morning: false, bedtime: false },
+    nextWaterAt: Date.now() + parsed.waterInterval * 60000,
+    nextEyeAt: Date.now() + parsed.eyeInterval * 60000,
+  };
+  return dailyState.weekKey === currentWeekKey() ? dailyState : {
+    ...dailyState, weekKey: currentWeekKey(), strengthCount: 0,
+  };
+}
+
 function reminderTimestamp(time: string) {
   const [hour, minute] = time.split(':').map(Number);
   const date = new Date();
@@ -55,36 +79,71 @@ export function useAttentionCompanion() {
   const [eyeBreakRemaining, setEyeBreakRemaining] = useState(0);
   const [eyeBreakActive, setEyeBreakActive] = useState(false);
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('loading');
   const notified = useRef(new Set<string>());
+  const cloudReady = useRef(false);
 
   useEffect(() => {
+    const controller = new AbortController();
     const hydrationTimer = window.setTimeout(() => {
       const saved = window.localStorage.getItem(STORAGE_KEY);
-      const base = freshState();
+      let localState = freshState();
       if (saved) {
         try {
-          const parsed = { ...base, ...JSON.parse(saved) } as CompanionState;
-          const dailyState = parsed.dateKey === todayKey() ? parsed : {
-            ...parsed, dateKey: todayKey(), waterCount: 0, eyeCount: 0, focusSecondsToday: 0,
-            supplements: { morning: false, evening: false },
-            eyeMassages: { morning: false, bedtime: false },
-            nextWaterAt: Date.now() + parsed.waterInterval * 60000,
-            nextEyeAt: Date.now() + parsed.eyeInterval * 60000,
-          };
-          setState(dailyState.weekKey === currentWeekKey() ? dailyState : {
-            ...dailyState, weekKey: currentWeekKey(), strengthCount: 0,
-          });
-        } catch { setState(base); }
+          localState = normalizeState(JSON.parse(saved));
+        } catch { localState = freshState(); }
       }
+      setState(localState);
       setNow(Date.now());
       setNotificationPermission('Notification' in window ? Notification.permission : 'denied');
       setHydrated(true);
+
+      void (async () => {
+        try {
+          const response = await fetch('/api/state', { cache: 'no-store', signal: controller.signal });
+          if (!response.ok) throw new Error('Cloud state unavailable');
+          const payload = await response.json() as { state: unknown | null };
+          if (payload.state) {
+            setState(normalizeState(payload.state));
+          } else {
+            const saveResponse = await fetch('/api/state', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ state: localState }),
+              signal: controller.signal,
+            });
+            if (!saveResponse.ok) throw new Error('Cloud state unavailable');
+          }
+          cloudReady.current = true;
+          setSyncStatus('synced');
+        } catch (error) {
+          if (!(error instanceof DOMException && error.name === 'AbortError')) setSyncStatus('local');
+        }
+      })();
     }, 0);
-    return () => window.clearTimeout(hydrationTimer);
+    return () => {
+      controller.abort();
+      window.clearTimeout(hydrationTimer);
+    };
   }, []);
 
   useEffect(() => {
-    if (hydrated) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    if (!hydrated) return;
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    if (!cloudReady.current) return;
+
+    const saveTimer = window.setTimeout(() => {
+      setSyncStatus('loading');
+      void fetch('/api/state', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ state }),
+      }).then((response) => {
+        if (!response.ok) throw new Error('Cloud save failed');
+        setSyncStatus('synced');
+      }).catch(() => setSyncStatus('local'));
+    }, 700);
+    return () => window.clearTimeout(saveTimer);
   }, [hydrated, state]);
 
   useEffect(() => {
@@ -176,7 +235,7 @@ export function useAttentionCompanion() {
   }
 
   return {
-    state, now, hydrated, focusRemaining, focusRunning, eyeBreakRemaining, dueItems, notificationPermission,
+    state, now, hydrated, focusRemaining, focusRunning, eyeBreakRemaining, dueItems, notificationPermission, syncStatus,
     setTask: (task: string) => setState((current) => ({ ...current, task })), prepareFocus, toggleFocus,
     finishFocus, logWater, startEyeBreak, stopEyeBreak, logSupplement, logEyeMassage, logStrength, updateInterval,
     updateSupplement: (period: SupplementPeriod, value: string) => setState((current) => ({ ...current, [`${period}Supplement`]: value })),

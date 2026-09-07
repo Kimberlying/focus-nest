@@ -93,7 +93,10 @@ export default function Home() {
         <section className="stage" id="top">
           <div className="badge rise" style={{ '--i': 8 } as React.CSSProperties}>
             <span className="badge-tag">今天</span>
-            <span>喝水 {companion.state.waterCount} 杯 · 护眼 {companion.state.eyeCount} 次</span>
+            <span>
+              喝水 {companion.state.waterCount} 杯 · 护眼 {companion.state.eyeCount} 次 ·{' '}
+              {companion.syncStatus === 'synced' ? '云端已保存' : companion.syncStatus === 'loading' ? '正在同步' : '本机保存'}
+            </span>
           </div>
 
           <h1 className="headline rise" style={{ '--i': 10 } as React.CSSProperties}>
