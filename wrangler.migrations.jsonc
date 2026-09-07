@@ -1,9 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "focus-nest",
-  "main": "vinext/server/app-router-entry",
+  "name": "focus-nest-migrations",
   "compatibility_date": "2026-09-07",
-  "compatibility_flags": ["nodejs_compat"],
   "d1_databases": [
     {
       "binding": "DB",

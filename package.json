@@ -11,7 +11,7 @@
     "start": "vinext start",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
-    "db:migrate:local": "wrangler d1 migrations apply site-creator-d1 --local"
+    "db:migrate:local": "wrangler d1 migrations apply site-creator-d1 --local --config wrangler.migrations.jsonc"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",
